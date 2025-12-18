@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>❤️ Love You</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    canvas {
+      display: block;
+    }
+    .name {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      text-align: center;
+      color: #ff6b81;
+      font-size: 42px;
+      font-weight: bold;
+      transform: translateY(-50%);
+      pointer-events: none;
+      text-shadow: 0 0 10px #ff6b81;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="name">Anh ❤️ Em</div>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  let pulse = 1;
+  let pulseSpeed = 0.02;
+
+  function heart(t) {
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y =
+      13 * Math.cos(t) -
+      5 * Math.cos(2 * t) -
+      2 * Math.cos(3 * t) -
+      Math.cos(4 * t);
+    return { x, y };
+  }
+
+  class Particle {
+    constructor() {
+      this.t = Math.random() * Math.PI * 2;
+      this.size = Math.random() * 2 + 1;
+      this.speed = Math.random() * 0.01 + 0.005;
+    }
+
+    update() {
+      this.t += this.speed;
+      const p = heart(this.t);
+
+      this.x = centerX + p.x * 15 * pulse;
+      this.y = centerY - p.y * 15 * pulse;
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 80, 120, 0.9)";
+      ctx.fill();
+    }
+  }
+
+  function init() {
+    for (let i = 0; i < 900; i++) {
+      particles.push(new Particle());
+    }
+  }
+
+  function animate() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Hiệu ứng trái tim đập
+    pulse += pulseSpeed;
+    if (pulse > 1.1 || pulse < 0.95) pulseSpeed *= -1;
+
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  init();
+  animate();
+
+  window.onresize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+</script>
+
+</body>
+</html>
